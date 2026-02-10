@@ -1,4 +1,4 @@
-# Amal Jyothi College — AMERN Stack Website
+# Amal Jyothi College — A MERN Stack Website
 
 A college-centered web application for Amal Jyothi College built with an AMERN-style stack (Angular/React frontend option + MongoDB, Express, Node). The site provides public information pages, role-based portals for students and faculty, and an admin dashboard for college staff.
 
