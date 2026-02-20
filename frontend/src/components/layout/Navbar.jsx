@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown, Search } from 'lucide-react';
+import { Menu, X, ChevronDown, Search, LogIn } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { cn } from '../../utils';
 import { Container } from '../ui/Layout';
 import { Button } from '../ui/Button';
@@ -68,6 +69,10 @@ export function Navbar() {
                         </a>
                      ))}
                   </div>
+                  <Link to="/login" className="text-sm font-medium text-white/90 hover:text-white transition-colors relative group flex items-center gap-1.5">
+                     <LogIn className="w-4 h-4" />
+                     Login
+                  </Link>
                   <Button size="sm" className="rounded-full">Apply Now</Button>
                </div>
 
@@ -95,6 +100,14 @@ export function Navbar() {
                         {item.name}
                      </a>
                   ))}
+                  <Link
+                     to="/login"
+                     className="flex items-center gap-2 text-lg font-medium text-white/90 hover:text-primary transition-colors py-2 border-b border-white/5"
+                     onClick={() => setIsOpen(false)}
+                  >
+                     <LogIn className="w-5 h-5" />
+                     Login
+                  </Link>
                   <Button className="w-full mt-4 rounded-full">Apply Now</Button>
                </div>
             </div>
