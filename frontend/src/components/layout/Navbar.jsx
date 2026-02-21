@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown, Search, LogIn } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Menu, X, ChevronDown, Search, LogIn, LogOut, UserCircle } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '../../utils';
 import { Container } from '../ui/Layout';
 import { Button } from '../ui/Button';
@@ -17,6 +17,24 @@ const navItems = [
 export function Navbar() {
    const [isOpen, setIsOpen] = useState(false);
    const [isScrolled, setIsScrolled] = useState(false);
+   const [user, setUser] = useState(null);
+   const [showUserMenu, setShowUserMenu] = useState(false);
+   const navigate = useNavigate();
+   const location = useLocation();
+
+   // Check for logged-in user on mount and on route change
+   useEffect(() => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+         try {
+            setUser(JSON.parse(storedUser));
+         } catch {
+            setUser(null);
+         }
+      } else {
+         setUser(null);
+      }
+   }, [location]);
 
    useEffect(() => {
       const handleScroll = () => {
@@ -25,6 +43,14 @@ export function Navbar() {
       window.addEventListener('scroll', handleScroll);
       return () => window.removeEventListener('scroll', handleScroll);
    }, []);
+
+   const handleLogout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setUser(null);
+      setShowUserMenu(false);
+      navigate('/');
+   };
 
    return (
       <nav
@@ -45,7 +71,7 @@ export function Navbar() {
                         className="w-16 h-16 object-contain relative z-10 drop-shadow-lg p-1 bg-white/90 rounded-full"
                         onError={(e) => {
                            e.target.onerror = null;
-                           e.target.src = "https://placehold.co/100x100/3b82f6/ffffff?text=AJCE"; // Fallback
+                           e.target.src = "https://placehold.co/100x100/3b82f6/ffffff?text=AJCE";
                         }}
                      />
                   </div>
@@ -69,10 +95,47 @@ export function Navbar() {
                         </a>
                      ))}
                   </div>
-                  <Link to="/login" className="text-sm font-medium text-white/90 hover:text-white transition-colors relative group flex items-center gap-1.5">
-                     <LogIn className="w-4 h-4" />
-                     Login
-                  </Link>
+
+                  {/* User Greeting or Login Link */}
+                  {user ? (
+                     <div className="relative">
+                        <button
+                           onClick={() => setShowUserMenu(!showUserMenu)}
+                           className="flex items-center gap-2 px-3 py-2 rounded-full bg-primary/10 border border-primary/20 hover:bg-primary/20 hover:border-primary/30 transition-all duration-300"
+                        >
+                           <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-xs font-bold uppercase">
+                              {user.name?.charAt(0) || 'U'}
+                           </div>
+                           <span className="text-sm font-medium text-white max-w-[120px] truncate">
+                              Hi, {user.name?.split(' ')[0] || 'User'}
+                           </span>
+                           <ChevronDown className={cn("w-3.5 h-3.5 text-text-muted transition-transform duration-300", showUserMenu && "rotate-180")} />
+                        </button>
+
+                        {/* Dropdown */}
+                        {showUserMenu && (
+                           <div className="absolute right-0 top-full mt-2 w-52 bg-background-dark/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl shadow-black/30 overflow-hidden animate-in slide-in-from-top-2">
+                              <div className="p-3 border-b border-white/[0.06]">
+                                 <p className="text-sm font-medium text-white truncate">{user.name}</p>
+                                 <p className="text-xs text-text-muted truncate">{user.email}</p>
+                              </div>
+                              <button
+                                 onClick={handleLogout}
+                                 className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors duration-200"
+                              >
+                                 <LogOut className="w-4 h-4" />
+                                 Sign Out
+                              </button>
+                           </div>
+                        )}
+                     </div>
+                  ) : (
+                     <Link to="/login" className="text-sm font-medium text-white/90 hover:text-white transition-colors relative group flex items-center gap-1.5">
+                        <LogIn className="w-4 h-4" />
+                        Login
+                     </Link>
+                  )}
+
                   <Button size="sm" className="rounded-full">Apply Now</Button>
                </div>
 
@@ -100,14 +163,38 @@ export function Navbar() {
                         {item.name}
                      </a>
                   ))}
-                  <Link
-                     to="/login"
-                     className="flex items-center gap-2 text-lg font-medium text-white/90 hover:text-primary transition-colors py-2 border-b border-white/5"
-                     onClick={() => setIsOpen(false)}
-                  >
-                     <LogIn className="w-5 h-5" />
-                     Login
-                  </Link>
+
+                  {/* Mobile: User Greeting or Login */}
+                  {user ? (
+                     <div className="py-2 border-b border-white/5">
+                        <div className="flex items-center gap-3 mb-3">
+                           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-sm font-bold uppercase">
+                              {user.name?.charAt(0) || 'U'}
+                           </div>
+                           <div>
+                              <p className="text-sm font-medium text-white">Hi, {user.name?.split(' ')[0] || 'User'}</p>
+                              <p className="text-xs text-text-muted">{user.email}</p>
+                           </div>
+                        </div>
+                        <button
+                           onClick={() => { handleLogout(); setIsOpen(false); }}
+                           className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 transition-colors"
+                        >
+                           <LogOut className="w-4 h-4" />
+                           Sign Out
+                        </button>
+                     </div>
+                  ) : (
+                     <Link
+                        to="/login"
+                        className="flex items-center gap-2 text-lg font-medium text-white/90 hover:text-primary transition-colors py-2 border-b border-white/5"
+                        onClick={() => setIsOpen(false)}
+                     >
+                        <LogIn className="w-5 h-5" />
+                        Login
+                     </Link>
+                  )}
+
                   <Button className="w-full mt-4 rounded-full">Apply Now</Button>
                </div>
             </div>

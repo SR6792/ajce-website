@@ -1,0 +1,15 @@
+{
+    "name": "ajce-website",
+    "version": "1.0.0",
+    "description": "AJCE Website - Frontend & Backend",
+    "scripts": {
+        "dev": "concurrently --names \"BACKEND,FRONTEND\" --prefix-colors \"cyan,magenta\" \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+        "start:backend": "npm run start --prefix backend",
+        "start:frontend": "npm run dev --prefix frontend",
+        "build:frontend": "npm run build --prefix frontend",
+        "seed": "npm run seed --prefix backend"
+    },
+    "devDependencies": {
+        "concurrently": "^9.1.2"
+    }
+}
