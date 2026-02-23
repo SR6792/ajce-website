@@ -24,7 +24,7 @@ A college-centered web application for Amal Jyothi College built with an AMERN-s
 
 Prerequisites: Node.js (14+), npm or yarn, MongoDB (local or Atlas)
 
-Clone the repo:
+Clone the repo :
 
 ```bash
 git clone <repo-url>
