@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "Backend server for AJCE website",
   "main": "server.js",
+  "homepage": "https://SR6792.github.io/ajce-website",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
